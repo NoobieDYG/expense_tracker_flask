@@ -14,4 +14,4 @@ class Expense(db.Model):
     expense_amount=db.Column(db.Float)
     date=db.Column(db.Date)
     year_id=db.Column(db.Integer,db.ForeignKey('year.id'))
-    month=db.Column(db.Integer,nullable=False)
+    month=db.Column(db.Integer) 
