@@ -10,3 +10,15 @@ th, td {
     padding: 10px;
     text-align: center;
 }
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-start {
+    justify-content: flex-start;
+}
+
+totalButton {
+    margin-left: 0; 
+}
