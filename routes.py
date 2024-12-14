@@ -71,3 +71,33 @@ def add_expense():
     except Exception as e:
         return jsonify({'success':False,'message':str(e)}
         )
+
+
+@routes.route('/delete_expense/<int:expense_id>',methods=['DELETE'])
+
+def delete_expense(expense_id):
+    try:
+        query=text('DELETE from expense where id= :id')
+        result=db.session.execute(query,{'id':expense_id})
+        db.session.commit()
+        if result.rowcount>0:
+            return jsonify({'success':True,'message':'deleted'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success':False,'message':str(e)})
+
+@routes.route('/totalexpense/<int:year>/<int:month>',methods=['GET'])
+def total_expense(year,month):
+    try:
+        query=text('''
+            select sum(expense_amount) as total
+            from expense 
+            where year_id= :year and month= :month
+        ''')
+        result=db.session.execute(query,{'year':year,'month':month})
+        total=result.scalar()
+        if total is None:
+            total = 0.0
+        return jsonify({'success': True, 'total': total})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
