@@ -23,6 +23,9 @@ function fetchExpenses() {
                     <td>${expense.expense_name}</td>
                     <td>${expense.expense_amount}</td>
                     <td>${expense.date}</td>
+                    <td>
+                        <button class ='btn btn-danger btn-sm' onclick='deleteExpense(${expense.id})'>Delete</button>
+                    </td>
                 `;
                 expenseList.appendChild(row);
             });
@@ -45,6 +48,9 @@ function filterExpensesByMonth(month) {
                         <td>${expense.expense_name}</td>
                         <td>${expense.expense_amount}</td>
                         <td>${expense.date}</td>
+                        <td>
+                        <button class ='btn btn-danger btn-sm' onclick='deleteExpense(${expense.id})'>Delete</button>
+                        </td>
                     `;
                     expenseList.appendChild(row);
                 });
@@ -97,3 +103,49 @@ document.getElementById('addExpenseButton').addEventListener('click',function ()
         alert('An error occurred. Please try again.');
     });
 });
+
+function deleteExpense(expense_id){
+    if(confirm('Are you sure you want to delete this')){
+        fetch(`/delete_expense/${expense_id}`,{
+            method:'DELETE',
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            if (data.success){
+                alert('Expense deleted successfully');
+                fetchExpenses();
+            } else {
+                alert('Failed to delete expense: '+ data.message);
+
+
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting expense:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+}
+
+document.getElementById('totalButton').addEventListener('click', function() {
+    const selectedYear = document.getElementById('yearDropdown').value;
+    const selectedMonth = document.getElementById('monthDropdown').value;
+    fetchTotalExpense(selectedYear, selectedMonth); // Pass selected year and month
+});
+
+function fetchTotalExpense(year, month) {
+    fetch(`/totalexpense/${year}/${month}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Display the total amount returned by Flask
+                document.getElementById('totalAmountValue').textContent = data.total.toFixed(2);
+            } else {
+                alert('Failed to calculate total: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching total expense:', error);
+            alert('An error occurred. Please try again.');
+        });
+}
